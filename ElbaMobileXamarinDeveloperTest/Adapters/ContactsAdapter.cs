@@ -3,6 +3,9 @@ using Android.Support.V7.Widget;
 using Android.Views;
 using ElbaMobileXamarinDeveloperTest.Core.ViewModels;
 using ElbaMobileXamarinDeveloperTest.Holders;
+using Java.Util;
+using System.Reflection;
+using static Android.Views.View;
 
 namespace ElbaMobileXamarinDeveloperTest.Adapters
 {
@@ -18,7 +21,7 @@ namespace ElbaMobileXamarinDeveloperTest.Adapters
         }
 
         public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType) =>
-            new ContactViewHolder(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.contact_item, parent, false));
+            new ContactViewHolder(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.contact_item, parent, false), _context);
 
         public override void OnBindViewHolder(RecyclerView.ViewHolder viewHolder, int position)
         {
@@ -29,14 +32,7 @@ namespace ElbaMobileXamarinDeveloperTest.Adapters
             currentHolder.HeightTextView.Text = contact.Height;
             currentHolder.NameTextView.Text = contact.Name;
             currentHolder.PhoneTextView.Text = contact.Phone;
-
-            currentHolder.ItemView.Click += null;
-            currentHolder.ItemView.Click += (sender, args) =>
-            {
-                var intent = new Intent(_context, typeof(ContactActivity));
-                intent.PutExtra(_context.Resources.GetString(Resource.String.contact_id_intent), contact.Id.ToString());
-                _context.StartActivity(intent);
-            };
+            currentHolder.IdTextView.Text = contact.Id.ToString();
         }
 
         public override int ItemCount => _viewModel.Contacts.Count;
