@@ -13,12 +13,6 @@ namespace ElbaMobileXamarinDeveloperTest.Core.ViewModels
 
         public string Height { get; set; }
 
-        public string Biography { get; set; }
-
-        public Temperament Temperament { get; set; }
-
-        public DateTime StartDate { get; set; }
-
-        public DateTime EndDate { get; set; }
+        public int Id { get; set; }
     }
 }

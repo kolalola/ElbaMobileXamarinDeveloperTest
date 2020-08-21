@@ -19,13 +19,16 @@ using ElbaMobileXamarinDeveloperTest.Listeners;
 
 namespace ElbaMobileXamarinDeveloperTest
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", MainLauncher = true)]
+    [Activity(Theme = "@style/AppTheme.NoActionBar", MainLauncher = true)]
     public class MainActivity : AppCompatActivity
     {
         private RecyclerView _recyclerView;
         private MainViewModel _viewModel;
         private ContactsAdapter _adapter;
-        public SwipeRefreshLayout _refresher;
+        private SwipeRefreshLayout _refresher;
+        private EditText _searchEditText;
+
+        public bool IsSearching => !string.IsNullOrEmpty(_searchEditText.Text);
 
         protected override async void OnCreate(Bundle savedInstanceState)
         {
@@ -33,19 +36,27 @@ namespace ElbaMobileXamarinDeveloperTest
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             SetContentView(Resource.Layout.activity_main);
 
-            Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
-            SetSupportActionBar(toolbar);
-
             ConfigureRecyclerView();
 
             ConfigureRefresher();
 
-            _viewModel = App.Container.Resolve<MainViewModel>()
-                .LoadFirstContacts();
+            ConfigureSearch();
 
-            await DoFirstAppWorkAsync();
+            _viewModel = (await App.Container.Resolve<MainViewModel>()
+                .UpdateOrNothing())
+                .ReloadContacts();
 
             ResetAdapter();
+        }
+
+        private void ConfigureSearch()
+        {
+            _searchEditText = FindViewById<EditText>(Resource.Id.search_editText);
+            _searchEditText.TextChanged += (sender, args) =>
+            {
+                _viewModel.StartNewSearch(string.Concat(args.Text));
+                ResetAdapter();
+            };
         }
 
         private void ConfigureRefresher()
@@ -53,7 +64,11 @@ namespace ElbaMobileXamarinDeveloperTest
             _refresher = FindViewById<SwipeRefreshLayout>(Resource.Id.refresher);
             _refresher.Refresh += (sender, args) => 
             {
-                _viewModel.RefreshContacts();
+                if (IsSearching)
+                    _viewModel.StartNewSearch(_searchEditText.Text);
+                else
+                    _viewModel.RefreshContacts();
+
                 ResetAdapter();
                 _refresher.Refreshing = false;
             };
@@ -70,7 +85,7 @@ namespace ElbaMobileXamarinDeveloperTest
                 var contactsRepository = App.Container.Resolve<IContactsRepository>();
                 contactsRepository.RefreshData(await contactsLoader.LoadContactsAsync());
 
-                _viewModel.LoadFirstContacts();
+                _viewModel.ReloadContacts();
             }
         }
 
@@ -93,13 +108,17 @@ namespace ElbaMobileXamarinDeveloperTest
 
         private void LoadMore(object sender, EventArgs e)
         {
-            _viewModel.LoadMoreContacts(_viewModel.Page);
+            if (!IsSearching)
+                _viewModel.LoadMoreContacts();
+            else
+                _viewModel.SearchMore(_searchEditText.Text);
+
             _adapter.NotifyDataSetChanged();
         }
 
         private void ResetAdapter()
         {
-            _adapter = new ContactsAdapter(_viewModel);
+            _adapter = new ContactsAdapter(this, _viewModel);
             _recyclerView.SetAdapter(_adapter);
         }
 

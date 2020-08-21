@@ -9,6 +9,10 @@ namespace ElbaMobileXamarinDeveloperTest.Core.DataBase.Repositories.Contacts
     {
         void RefreshData(IList<Contact> contacts );
 
-        IList<Contact> GetContacts(int page);
+        IList<Contact> GetContacts(int page, int loadCount);
+
+        Contact GetContact(int id);
+
+        IList<Contact> Search(string text, int page, int loadCount);
     }
 }
