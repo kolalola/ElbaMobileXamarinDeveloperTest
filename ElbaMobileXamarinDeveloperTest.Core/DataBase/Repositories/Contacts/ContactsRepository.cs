@@ -1,9 +1,7 @@
 ﻿using ElbaMobileXamarinDeveloperTest.Core.DataBase.Models;
 using PhoneNumbers;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace ElbaMobileXamarinDeveloperTest.Core.DataBase.Repositories.Contacts
 {

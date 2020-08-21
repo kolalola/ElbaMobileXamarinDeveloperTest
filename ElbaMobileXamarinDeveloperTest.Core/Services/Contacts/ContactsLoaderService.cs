@@ -3,11 +3,9 @@ using ElbaMobileXamarinDeveloperTest.Core.DataBase.Repositories.DownloadsHistory
 using ElbaMobileXamarinDeveloperTest.Core.Dto;
 using ElbaMobileXamarinDeveloperTest.Core.Services.Phone;
 using ElbaMobileXamarinDeveloperTest.Core.Services.Rest;
-using PhoneNumbers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace ElbaMobileXamarinDeveloperTest.Core.Services.Contacts
@@ -48,6 +46,7 @@ namespace ElbaMobileXamarinDeveloperTest.Core.Services.Contacts
             }
 
             _historyRepository.CreateOrUpdateHistory(DateTime.UtcNow);
+
             return result.Select(c => new Contact
             {
                 Biography = c.Biography,

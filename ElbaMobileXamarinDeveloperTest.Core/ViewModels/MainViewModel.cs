@@ -4,11 +4,9 @@ using ElbaMobileXamarinDeveloperTest.Core.DataBase.Repositories.DownloadsHistory
 using ElbaMobileXamarinDeveloperTest.Core.Helpers;
 using ElbaMobileXamarinDeveloperTest.Core.Services.Contacts;
 using ElbaMobileXamarinDeveloperTest.Core.Services.Phone;
-using PhoneNumbers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace ElbaMobileXamarinDeveloperTest.Core.ViewModels
@@ -20,14 +18,10 @@ namespace ElbaMobileXamarinDeveloperTest.Core.ViewModels
         private readonly IContactsLoaderService _loadService;
         private readonly IPhoneService _phoneService;
 
-        public int LoadCount => 30;
-        public TimeSpan UpdatePeriod => TimeSpan.FromMinutes(1);
-        public int Page { get; private set; }
-
         public MainViewModel(IContactsRepository contactsRepository,
-            IDownloadsHistoryRepository historyRepository,
-            IContactsLoaderService loadService,
-            IPhoneService phoneService)
+           IDownloadsHistoryRepository historyRepository,
+           IContactsLoaderService loadService,
+           IPhoneService phoneService)
         {
             _contactsRepository = contactsRepository;
             _historyRepository = historyRepository;
@@ -38,6 +32,15 @@ namespace ElbaMobileXamarinDeveloperTest.Core.ViewModels
 
         public List<ContactViewModel> Contacts { get; set; }
 
+        public int LoadCount => 30;
+        public TimeSpan UpdatePeriod => TimeSpan.FromMinutes(1);
+        public int Page { get; private set; }
+        public string SearchText { get; set; }
+        public bool IsSearching => !string.IsNullOrEmpty(SearchText);
+
+        /// <summary>
+        /// Запрашивает с источников контакты, если не смог загрузить, то ничего не делает
+        /// </summary>
         public async Task<MainViewModel> UpdateOrNothing(Action<string> errorAction = null)
         {
             if(_historyRepository.IsNeedToUpdate(UpdatePeriod))
@@ -53,7 +56,37 @@ namespace ElbaMobileXamarinDeveloperTest.Core.ViewModels
             return this;
         }
 
-        public MainViewModel LoadMoreContacts()
+        /// <summary>
+        /// Прогружает дальше список
+        /// </summary>
+        /// <returns></returns>
+        public MainViewModel LoadMore()
+        {
+            if (IsSearching)
+                SearchMore();
+            else
+                LoadMoreContacts();
+
+            return this;
+        }
+
+        /// <summary>
+        /// Сбрасывает список, ищет или прогружает заново, в зависимости от SearchText
+        /// SearchText нужно обновлять
+        /// </summary>
+        public MainViewModel RefreshContacts()
+        {
+            Contacts.Clear();
+            Page = 0;
+
+            if (IsSearching)
+                SearchMore();
+            else
+                LoadMoreContacts();
+            return this;
+        }
+
+        private MainViewModel LoadMoreContacts()
         {
             var contacts = _contactsRepository.GetContacts(Page, LoadCount);
             if (contacts != null)
@@ -63,33 +96,9 @@ namespace ElbaMobileXamarinDeveloperTest.Core.ViewModels
             return this;
         }
 
-        public MainViewModel ReloadContacts()
+        private MainViewModel SearchMore()
         {
-            Page = 0;
-            LoadMoreContacts();
-
-            return this;
-        }
-
-        public MainViewModel RefreshContacts()
-        {
-            Contacts.Clear();
-            ReloadContacts();
-            Page = 0;
-            return this;
-        }
-
-        public MainViewModel StartNewSearch(string text)
-        {
-            Page = 0;
-            Contacts.Clear();
-            SearchMore(text);
-            return this;
-        }
-
-        public MainViewModel SearchMore(string text)
-        {
-            var contacts = _contactsRepository.Search(text, Page, LoadCount);
+            var contacts = _contactsRepository.Search(SearchText, Page, LoadCount);
             if (contacts != null)
                 this.Contacts.AddRange(contacts.Select(c => Map(c))
                 .ToList());

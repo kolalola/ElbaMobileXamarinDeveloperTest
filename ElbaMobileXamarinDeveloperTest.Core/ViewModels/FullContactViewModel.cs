@@ -1,9 +1,6 @@
 ﻿using ElbaMobileXamarinDeveloperTest.Core.DataBase.Models;
 using ElbaMobileXamarinDeveloperTest.Core.DataBase.Repositories.Contacts;
 using ElbaMobileXamarinDeveloperTest.Core.Services.Phone;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ElbaMobileXamarinDeveloperTest.Core.ViewModels
 {

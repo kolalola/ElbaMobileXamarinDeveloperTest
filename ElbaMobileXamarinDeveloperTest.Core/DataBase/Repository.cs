@@ -1,9 +1,6 @@
-﻿using ElbaMobileXamarinDeveloperTest.Core.DataBase.Models;
-using SQLite;
+﻿using SQLite;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace ElbaMobileXamarinDeveloperTest.Core.DataBase
 {
@@ -13,6 +10,9 @@ namespace ElbaMobileXamarinDeveloperTest.Core.DataBase
 
         protected readonly SQLiteConnection Database;
 
+        /// <summary>
+        /// Только для Андройд
+        /// </summary>
         protected static string DatabasePath
         {
             get

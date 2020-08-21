@@ -1,9 +1,4 @@
-﻿using ElbaMobileXamarinDeveloperTest.Core.DataBase.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ElbaMobileXamarinDeveloperTest.Core.ViewModels
+﻿namespace ElbaMobileXamarinDeveloperTest.Core.ViewModels
 {
     public class ContactViewModel
     {

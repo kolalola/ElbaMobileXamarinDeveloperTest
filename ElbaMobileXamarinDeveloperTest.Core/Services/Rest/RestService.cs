@@ -1,10 +1,6 @@
 ﻿using ElbaMobileXamarinDeveloperTest.Core.Helpers;
-using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace ElbaMobileXamarinDeveloperTest.Core.Services.Rest

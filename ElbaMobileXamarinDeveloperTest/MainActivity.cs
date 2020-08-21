@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Android;
 using Android.App;
 using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
-using Android.Support.Design.Widget;
 using Android.Support.V4.App;
 using Android.Support.V4.Content;
 using Android.Support.V4.Widget;
@@ -17,11 +14,8 @@ using Android.Views;
 using Android.Widget;
 using Autofac;
 using ElbaMobileXamarinDeveloperTest.Adapters;
-using ElbaMobileXamarinDeveloperTest.Core.DataBase.Repositories.Contacts;
-using ElbaMobileXamarinDeveloperTest.Core.Services.Contacts;
 using ElbaMobileXamarinDeveloperTest.Core.ViewModels;
 using ElbaMobileXamarinDeveloperTest.Listeners;
-using Xamarin.Essentials;
 
 namespace ElbaMobileXamarinDeveloperTest
 {
@@ -60,19 +54,46 @@ namespace ElbaMobileXamarinDeveloperTest
 
             _viewModel = (await App.Container.Resolve<MainViewModel>()
                 .UpdateOrNothing((message) => Toast.MakeText(this, message, ToastLength.Long).Show()))
-                .ReloadContacts();
+                .RefreshContacts();
 
             ResetAdapter();
 
             FinishProgressBar();
         }
 
+        public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
+        {
+            Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+
+            base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+
+        /// <summary>
+        /// Проверяет наличие разрешений
+        /// В противном случае запрашивает их
+        /// </summary>
+        private void AskPermissions()
+        {
+            var localPermission = new List<string>();
+            localPermission.Add(Manifest.Permission.ReadExternalStorage);
+            localPermission.Add(Manifest.Permission.WriteExternalStorage);
+            localPermission.Add(Manifest.Permission.Internet);
+            localPermission.Add(Manifest.Permission.CallPhone);
+
+            var denyied = localPermission.Where(w => ContextCompat.CheckSelfPermission(this, w) != Permission.Granted).ToArray();
+
+            if (denyied.Length != 0)
+                ActivityCompat.RequestPermissions(this, denyied, 9332);
+        }
+
+        #region configure elements
         private void ConfigureSearch()
         {
             _searchEditText = FindViewById<EditText>(Resource.Id.search_editText);
             _searchEditText.TextChanged += (sender, args) =>
             {
-                _viewModel.StartNewSearch(string.Concat(args.Text));
+                _viewModel.SearchText = string.Concat(args.Text);
+                _viewModel.RefreshContacts();
                 ResetAdapter();
             };
         }
@@ -82,11 +103,7 @@ namespace ElbaMobileXamarinDeveloperTest
             _refresher = FindViewById<SwipeRefreshLayout>(Resource.Id.refresher);
             _refresher.Refresh += (sender, args) => 
             {
-                if (IsSearching)
-                    _viewModel.StartNewSearch(_searchEditText.Text);
-                else
-                    _viewModel.RefreshContacts();
-
+                _viewModel.RefreshContacts();
                 ResetAdapter();
                 _refresher.Refreshing = false;
             };
@@ -105,20 +122,18 @@ namespace ElbaMobileXamarinDeveloperTest
             _recyclerView.AddItemDecoration(dividerItemDecoration);
 
             var onScrollListener = new XamarinRecyclerViewOnScrollListener(layoutManager);
-            onScrollListener.LoadMoreEvent += LoadMore;
+            onScrollListener.LoadMoreEvent += (sender, args) => 
+            {
+                _viewModel.LoadMore();
+
+                _adapter.NotifyDataSetChanged();
+            };
+
             _recyclerView.AddOnScrollListener(onScrollListener);
         }
+        #endregion
 
-        private void LoadMore(object sender, EventArgs e)
-        {
-            if (!IsSearching)
-                _viewModel.LoadMoreContacts();
-            else
-                _viewModel.SearchMore(_searchEditText.Text);
-
-            _adapter.NotifyDataSetChanged();
-        }
-
+        #region tools
         private void ResetAdapter()
         {
             _adapter = new ContactsAdapter(this, _viewModel);
@@ -136,26 +151,6 @@ namespace ElbaMobileXamarinDeveloperTest
             _contentLinearLayout.Visibility = ViewStates.Visible;
             _progressBar.Visibility = ViewStates.Gone;
         }
-
-        public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
-        {
-            Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
-
-            base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
-
-        private void AskPermissions()
-        {
-            var localPermission = new List<string>();
-            localPermission.Add(Manifest.Permission.ReadExternalStorage);
-            localPermission.Add(Manifest.Permission.WriteExternalStorage);
-            localPermission.Add(Manifest.Permission.Internet);
-            localPermission.Add(Manifest.Permission.CallPhone);
-
-            var denyied = localPermission.Where(w => ContextCompat.CheckSelfPermission(this, w) != Permission.Granted).ToArray();
-
-            if (denyied.Length != 0)
-                ActivityCompat.RequestPermissions(this, denyied, 9332);
-        }
+        #endregion 
     }
 }

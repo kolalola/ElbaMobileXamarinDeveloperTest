@@ -1,7 +1,4 @@
-﻿using ElbaMobileXamarinDeveloperTest.Core.DataBase.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
 
 namespace ElbaMobileXamarinDeveloperTest.Core.DataBase.Repositories.DownloadsHistory
 {

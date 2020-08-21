@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
+﻿
 namespace ElbaMobileXamarinDeveloperTest.Core.Helpers
 {
     public static class StringHelper

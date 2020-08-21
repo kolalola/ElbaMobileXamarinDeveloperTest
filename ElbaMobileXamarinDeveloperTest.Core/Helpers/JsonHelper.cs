@@ -1,8 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using System.Text;
 
 namespace ElbaMobileXamarinDeveloperTest.Core.Helpers
 {
@@ -17,7 +13,7 @@ namespace ElbaMobileXamarinDeveloperTest.Core.Helpers
             {
                 return JsonConvert.DeserializeObject<T>(str);
             }
-            catch (Exception ex)
+            catch
             {
                 return default;
             }

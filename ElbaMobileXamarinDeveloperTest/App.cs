@@ -1,14 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 using Android.App;
-using Android.Content;
-using Android.OS;
 using Android.Runtime;
-using Android.Views;
-using Android.Widget;
 using Autofac;
 using ElbaMobileXamarinDeveloperTest.Core.DataBase.Repositories.Contacts;
 using ElbaMobileXamarinDeveloperTest.Core.DataBase.Repositories.DownloadsHistory;
@@ -19,7 +12,7 @@ using ElbaMobileXamarinDeveloperTest.Core.ViewModels;
 
 namespace ElbaMobileXamarinDeveloperTest
 {
-	[Application(Label = "@string/app_name")]
+    [Application(Label = "@string/app_name")]
 	public class App : Application
 	{
 		public static IContainer Container { get; set; }
