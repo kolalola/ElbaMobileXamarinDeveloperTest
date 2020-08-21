@@ -51,12 +51,12 @@ namespace ElbaMobileXamarinDeveloperTest.Core.Services.Contacts
             return result.Select(c => new Contact
             {
                 Biography = c.Biography,
-                EndDate = c.EducationPeriod.EndDate,
+                EndEducationPeriod = c.EducationPeriod.EndDate,
                 Height = c.Height,
                 Name = c.Name,
                 Phone = _phoneService.Normalize(c.Phone),
                 Temperament = (Temperament)c.Temperament,
-                StartDate = c.EducationPeriod.StartDate,
+                StartEducationPeriod = c.EducationPeriod.StartDate,
                 ExternalId = c.Id
             })
                 .OrderBy(c => c.Name)

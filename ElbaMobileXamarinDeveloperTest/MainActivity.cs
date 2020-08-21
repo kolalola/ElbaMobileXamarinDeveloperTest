@@ -1,10 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Android;
 using Android.App;
+using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.Design.Widget;
+using Android.Support.V4.App;
+using Android.Support.V4.Content;
 using Android.Support.V4.Widget;
 using Android.Support.V7.App;
 using Android.Support.V7.Widget;
@@ -16,6 +21,7 @@ using ElbaMobileXamarinDeveloperTest.Core.DataBase.Repositories.Contacts;
 using ElbaMobileXamarinDeveloperTest.Core.Services.Contacts;
 using ElbaMobileXamarinDeveloperTest.Core.ViewModels;
 using ElbaMobileXamarinDeveloperTest.Listeners;
+using Xamarin.Essentials;
 
 namespace ElbaMobileXamarinDeveloperTest
 {
@@ -27,14 +33,24 @@ namespace ElbaMobileXamarinDeveloperTest
         private ContactsAdapter _adapter;
         private SwipeRefreshLayout _refresher;
         private EditText _searchEditText;
+        private ProgressBar _progressBar;
+        private LinearLayout _contentLinearLayout;
 
         public bool IsSearching => !string.IsNullOrEmpty(_searchEditText.Text);
 
         protected override async void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
+            AskPermissions();
+
             SetContentView(Resource.Layout.activity_main);
+
+            _progressBar = FindViewById<ProgressBar>(Resource.Id.main_progressBar);
+            _contentLinearLayout = FindViewById<LinearLayout>(Resource.Id.content_linearLayout);
+
+            StartProgressBar();
 
             ConfigureRecyclerView();
 
@@ -47,6 +63,8 @@ namespace ElbaMobileXamarinDeveloperTest
                 .ReloadContacts();
 
             ResetAdapter();
+
+            FinishProgressBar();
         }
 
         private void ConfigureSearch()
@@ -122,11 +140,37 @@ namespace ElbaMobileXamarinDeveloperTest
             _recyclerView.SetAdapter(_adapter);
         }
 
+        private void StartProgressBar()
+        {
+            _contentLinearLayout.Visibility = ViewStates.Gone;
+            _progressBar.Visibility = ViewStates.Visible;
+        }
+
+        private void FinishProgressBar()
+        {
+            _contentLinearLayout.Visibility = ViewStates.Visible;
+            _progressBar.Visibility = ViewStates.Gone;
+        }
+
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
         {
             Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
 
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
-	}
+
+        private void AskPermissions()
+        {
+            var localPermission = new List<string>();
+            localPermission.Add(Manifest.Permission.ReadExternalStorage);
+            localPermission.Add(Manifest.Permission.WriteExternalStorage);
+            localPermission.Add(Manifest.Permission.Internet);
+            localPermission.Add(Manifest.Permission.CallPhone);
+
+            var denyied = localPermission.Where(w => ContextCompat.CheckSelfPermission(this, w) != Permission.Granted).ToArray();
+
+            if (denyied.Length != 0)
+                ActivityCompat.RequestPermissions(this, denyied, 9332);
+        }
+    }
 }

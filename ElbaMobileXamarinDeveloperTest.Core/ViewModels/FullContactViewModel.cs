@@ -42,7 +42,7 @@ namespace ElbaMobileXamarinDeveloperTest.Core.ViewModels
                 Phone = _phoneService.FormatNormalizedPhone(_contact.Phone);
                 Biography = _contact.Biography;
                 Temperament = _contact.Temperament.ToString();
-                EducationPeriod = $"{_contact.StartDate.ToString()} - {_contact.EndDate.ToString()}";
+                EducationPeriod = $"{_contact.StartEducationPeriod.ToString("dd.MM.yyyy")} - {_contact.EndEducationPeriod.ToString("dd.MM.yyyy")}";
             }
 
             return this;

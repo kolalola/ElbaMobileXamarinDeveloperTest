@@ -22,8 +22,8 @@ namespace ElbaMobileXamarinDeveloperTest.Core.DataBase.Models
 
         public Temperament Temperament { get; set; }
 
-        public DateTime StartDate { get; set; }
+        public DateTime StartEducationPeriod { get; set; }
 
-        public DateTime EndDate { get; set; }
+        public DateTime EndEducationPeriod { get; set; }
     }
 }
