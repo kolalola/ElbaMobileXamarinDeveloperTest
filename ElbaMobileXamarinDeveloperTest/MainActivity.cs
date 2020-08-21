@@ -59,7 +59,7 @@ namespace ElbaMobileXamarinDeveloperTest
             ConfigureSearch();
 
             _viewModel = (await App.Container.Resolve<MainViewModel>()
-                .UpdateOrNothing())
+                .UpdateOrNothing((message) => Toast.MakeText(this, message, ToastLength.Long).Show()))
                 .ReloadContacts();
 
             ResetAdapter();
@@ -90,21 +90,6 @@ namespace ElbaMobileXamarinDeveloperTest
                 ResetAdapter();
                 _refresher.Refreshing = false;
             };
-        }
-
-        /// <summary>
-        /// Загружает контакты в первый раз, если их нет в бд
-        /// </summary>
-        private async Task DoFirstAppWorkAsync()
-        {
-            if (!_viewModel.Contacts.Any())
-            {
-                var contactsLoader = App.Container.Resolve<IContactsLoaderService>();
-                var contactsRepository = App.Container.Resolve<IContactsRepository>();
-                contactsRepository.RefreshData(await contactsLoader.LoadContactsAsync());
-
-                _viewModel.ReloadContacts();
-            }
         }
 
         private void ConfigureRecyclerView()

@@ -30,10 +30,13 @@ namespace ElbaMobileXamarinDeveloperTest.Core.DataBase.Repositories.Contacts
 
         public void RefreshData(IList<Contact> contacts)
         {
-            lock (Locker)
+            if (contacts != null && contacts.Any())
             {
-                Database.DeleteAll<Contact>();
-                Database.InsertAll(contacts);
+                lock (Locker)
+                {
+                    Database.DeleteAll<Contact>();
+                    Database.InsertAll(contacts);
+                }
             }
         }
 

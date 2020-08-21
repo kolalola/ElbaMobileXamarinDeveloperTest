@@ -13,17 +13,24 @@ namespace ElbaMobileXamarinDeveloperTest.Core.Services.Rest
     {
         public async Task<T> GetOrDefaultAsync<T>(string uri)
         {
-            using (var client = new HttpClient())
+            try
             {
-                var response = await client.GetAsync(new Uri(uri));
-                if (response.IsSuccessStatusCode)
+                using (var client = new HttpClient())
                 {
-                    var content = await response.Content.ReadAsStringAsync();
-                    return content.DeserializeOrDefault<T>();
-                }
+                    var response = await client.GetAsync(new Uri(uri));
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var content = await response.Content.ReadAsStringAsync();
+                        return content.DeserializeOrDefault<T>();
+                    }
 
+                    return default;
+                }
+            }
+            catch
+            {
                 return default;
-            }   
+            }
         }
     }
 }

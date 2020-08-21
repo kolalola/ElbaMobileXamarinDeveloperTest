@@ -1,6 +1,7 @@
 ﻿using ElbaMobileXamarinDeveloperTest.Core.DataBase.Models;
 using ElbaMobileXamarinDeveloperTest.Core.DataBase.Repositories.Contacts;
 using ElbaMobileXamarinDeveloperTest.Core.DataBase.Repositories.DownloadsHistory;
+using ElbaMobileXamarinDeveloperTest.Core.Helpers;
 using ElbaMobileXamarinDeveloperTest.Core.Services.Contacts;
 using ElbaMobileXamarinDeveloperTest.Core.Services.Phone;
 using PhoneNumbers;
@@ -37,11 +38,15 @@ namespace ElbaMobileXamarinDeveloperTest.Core.ViewModels
 
         public List<ContactViewModel> Contacts { get; set; }
 
-        public async Task<MainViewModel> UpdateOrNothing()
+        public async Task<MainViewModel> UpdateOrNothing(Action<string> errorAction = null)
         {
             if(_historyRepository.IsNeedToUpdate(UpdatePeriod))
             {
                 var contacts = await _loadService.LoadContactsAsync();
+
+                if (contacts == null && errorAction != null)
+                    errorAction(StringHelper.NotLoaded);
+
                 _contactsRepository.RefreshData(contacts);
             }
 
