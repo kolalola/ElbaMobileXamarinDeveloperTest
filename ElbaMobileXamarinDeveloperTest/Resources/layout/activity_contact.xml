@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/design_navigation_item_horizontal_padding">
+
+    <TextView
+        android:id="@+id/contact_name_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/abc_text_size_headline_material"
+        android:paddingBottom="@dimen/design_textinput_caption_translate_y"/>
+
+    <TextView
+        android:id="@+id/contact_phone_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="?android:attr/textColorLinkInverse"
+        android:paddingBottom="@dimen/design_textinput_caption_translate_y"/>
+
+    <TextView
+        android:id="@+id/contact_temperament_texView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight ="true"
+        android:textColor="@android:color/darker_gray"
+        android:paddingBottom="@dimen/design_textinput_caption_translate_y"/>
+
+    <TextView
+        android:id="@+id/contact_ed_period_texView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight ="true"
+        android:textColor="@android:color/darker_gray"
+        android:paddingBottom="@dimen/design_textinput_caption_translate_y"/>
+
+        <TextView
+        android:id="@+id/contact_biography_texView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight ="true"
+        android:textColor="@android:color/black"/>
+
+    </LinearLayout>
+    
+</LinearLayout>
